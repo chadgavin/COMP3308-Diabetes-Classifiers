@@ -1,6 +1,8 @@
 import sys
 import math
+import time
 
+start_time = time.time()
 # Getting arguments
 training_file_name = sys.argv[1]
 testing_file_name = sys.argv[2]
@@ -65,7 +67,7 @@ def get_euclidean(first_entry, second_entry):
 def get_k_nearest_neighbor(entry, k):
     sorted_entries = []
     distances = []
-    training_entries_copy = training_entries
+    training_entries_copy = list(training_entries)
 
     for training_entry in training_entries:
         distances.append(get_euclidean(entry, training_entry))
@@ -74,9 +76,10 @@ def get_k_nearest_neighbor(entry, k):
 
     for run in range(0, k):
         for index in range(0, len(training_entries_copy)):
-            if distances[index] <= distances[minimum_index]:
+            if distances[index] < distances[minimum_index]:
                 minimum_index = index
-        if len(training_entries_copy) is not 0:
+
+        if len(training_entries_copy) != 0:
             sorted_entries.append(training_entries_copy[minimum_index])
             distances.pop(minimum_index)
             training_entries_copy.pop(minimum_index)
@@ -85,5 +88,57 @@ def get_k_nearest_neighbor(entry, k):
     return sorted_entries
 
 
-for entry in get_k_nearest_neighbor(training_entries[0], 10):
-    print(entry)
+# K Nearest Neighbor Classification
+# ARGUMENT: k number of nearest neighbor.
+# RETURN: NOTHING.
+def knn_classification(k):
+    for entry in testing_entries:
+        number_of_yes = 0
+        number_of_no = 0
+        nearest_neighbor = get_k_nearest_neighbor(entry, k)
+
+        for neighbor in nearest_neighbor:
+            if neighbor[number_of_attributes] == "yes":
+                number_of_yes += 1
+            else:
+                number_of_no += 1
+
+        if number_of_yes > number_of_no or number_of_yes == number_of_no:
+            print("yes")
+        else:
+            print("no")
+
+
+#                               #tutu
+#                               #tutu
+#     Naive Bayes algorithm.    #tutu
+#                               #tutu
+#                               #tutu
+
+
+# Normal Distribution for a particular attribute
+# ARGUMENT: An integer represents attribute column and particular condition.
+# RETURN: A float value indicating probability.
+def normal_distribution(column, condition, class_variable):
+    standard_deviation = 0
+
+    for entry in training_entries:
+
+
+    mean = 0
+
+    probability = (1 / (standard_deviation * math.sqrt(2 * math.pi))) * math.exp(
+        -(((condition - mean) ** 2) / (2 * (standard_deviation ** 2))))
+
+    return probability
+
+
+# Probability of Class Yes
+# ARGUMENT: NONE.
+# RETURN: A float value indicating probability.
+def probability_of_yes():
+    conditional_probabilities = []
+    for attribute_column in range(0, number_of_attributes):
+
+
+print("--- %s seconds ---" % (time.time() - start_time))
