@@ -1,5 +1,7 @@
 import sys
 import math
+import statistics
+import scipy
 import time
 
 start_time = time.time()
@@ -115,30 +117,21 @@ def knn_classification(k):
 #                               #tutu
 #                               #tutu
 
-
-# Normal Distribution for a particular attribute
-# ARGUMENT: An integer represents attribute column and particular condition.
-# RETURN: A float value indicating probability.
-def normal_distribution(column, condition, class_variable):
-    standard_deviation = 0
-
-    for entry in training_entries:
-
-
-    mean = 0
-
-    probability = (1 / (standard_deviation * math.sqrt(2 * math.pi))) * math.exp(
-        -(((condition - mean) ** 2) / (2 * (standard_deviation ** 2))))
-
-    return probability
-
-
 # Probability of Class Yes
 # ARGUMENT: NONE.
 # RETURN: A float value indicating probability.
 def probability_of_yes():
-    conditional_probabilities = []
+    probability = 1
+
     for attribute_column in range(0, number_of_attributes):
+        value = []
+        for entry in training_entries:
+            if entry[number_of_attributes] == "yes":
+                value.append(entry[attribute_column])
+        statistics.stdev(value)
+        statistics.mean(value)
+
+    return probability
 
 
 print("--- %s seconds ---" % (time.time() - start_time))
