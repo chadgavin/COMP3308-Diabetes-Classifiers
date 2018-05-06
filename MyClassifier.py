@@ -1,10 +1,7 @@
 import sys
 import math
 import statistics
-import scipy
-import time
 
-start_time = time.time()
 # Getting arguments
 training_file_name = sys.argv[1]
 testing_file_name = sys.argv[2]
@@ -113,25 +110,64 @@ def knn_classification(k):
 
 #                               #tutu
 #                               #tutu
-#     Naive Bayes algorithm.    #tutu
+#     Naive Bayes Algorithm.    #tutu
 #                               #tutu
 #                               #tutu
 
-# Probability of Class Yes
+# Naive Bayes algorithm
 # ARGUMENT: NONE.
-# RETURN: A float value indicating probability.
-def probability_of_yes():
-    probability = 1
+# RETURN: Nothing
+def naive_bayes_classification():
+    standard_deviation_yes = []
+    mean_yes = []
+    probability_yes = 1
+
+    standard_deviation_no = []
+    mean_no = []
+    probability_no = 1
 
     for attribute_column in range(0, number_of_attributes):
         value = []
         for entry in training_entries:
             if entry[number_of_attributes] == "yes":
                 value.append(entry[attribute_column])
-        statistics.stdev(value)
-        statistics.mean(value)
+        standard_deviation_yes.append(statistics.stdev(value))
+        mean_yes.append(statistics.mean(value))
+        probability_yes = float(len(value)) / float(len(training_entries))
 
-    return probability
+    for attribute_column in range(0, number_of_attributes):
+        value = []
+        for entry in training_entries:
+            if entry[number_of_attributes] == "no":
+                value.append(entry[attribute_column])
+        standard_deviation_no.append(statistics.stdev(value))
+        mean_no.append(statistics.mean(value))
+        probability_no = float(len(value)) / float(len(training_entries))
+
+    conditional_probability_yes = 1
+    conditional_probability_no = 1
+
+    for entry in testing_entries:
+        for attribute_column in range(0, number_of_attributes):
+            conditional_probability_yes *= (1/(standard_deviation_yes[attribute_column] * math.sqrt(2 * math.pi))) * math.exp(-(((entry[attribute_column] - mean_yes[attribute_column]) ** 2) / (2 * (standard_deviation_yes[attribute_column] ** 2))))
+            conditional_probability_no *= (1/(standard_deviation_no[attribute_column] * math.sqrt(2 * math.pi))) * math.exp(-(((entry[attribute_column] - mean_no[attribute_column]) ** 2) / (2 * (standard_deviation_no[attribute_column] ** 2))))
+        conditional_probability_yes *= probability_yes
+        conditional_probability_no *= probability_no
+
+        if conditional_probability_yes > conditional_probability_no or conditional_probability_yes == conditional_probability_no:
+            print("yes")
+        elif conditional_probability_no > conditional_probability_yes:
+            print("no")
+
+        conditional_probability_yes = 1
+        conditional_probability_no = 1
+
+    return
 
 
-print("--- %s seconds ---" % (time.time() - start_time))
+if algorithm == "NB":
+    naive_bayes_classification()
+else:
+    k_neighbors = int(algorithm[:-2])
+    knn_classification(k_neighbors)
+
