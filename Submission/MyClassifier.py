@@ -111,7 +111,7 @@ def get_euclidean(first_entry, second_entry):
     sum_of_squared_attributes = 0.0
 
     for index in range(0, number_of_attributes):
-        sum_of_squared_attributes += (float(first_entry[index]) - float(second_entry[index])) ** 2
+        sum_of_squared_attributes += (first_entry[index] - second_entry[index]) ** 2
 
     return math.sqrt(sum_of_squared_attributes)
 
@@ -160,11 +160,11 @@ def knn_classification(k):
                 number_of_no += 1
 
         if number_of_yes > number_of_no or number_of_yes == number_of_no:
-            if algorithm[-2:] == "NN" or algorithm == "TST":
+            if algorithm[-2:] == "NN":
                 print("yes")
             actual_results.append("yes")
         else:
-            if algorithm[-2:] == "NN" or algorithm == "TST":
+            if algorithm[-2:] == "NN":
                 print("no")
             actual_results.append("no")
 
@@ -307,7 +307,7 @@ def validate_knn(k):
     global training_entries
     global testing_entries
 
-    accuracies = []
+    errors = []
 
     for test_fold in range(0, 10):
         read_fold_file(test_fold + 1)
@@ -323,49 +323,17 @@ def validate_knn(k):
             if actual_results[index] != expected_results[index]:
                 error_results += 1
 
-        accuracies.append(1-(float(error_results) / float(len(expected_results))))
+        errors.append(float(error_results) / len(expected_results))
 
         training_entries = []
         testing_entries = []
 
-    sum_of_accuracy = 0
-    for accuracy in accuracies:
-        sum_of_accuracy += accuracy
+    sum_of_errors = 0
+    for error in errors:
+        sum_of_errors += error
 
-    for accuracy in accuracies:
-        print(accuracy)
+    print("Accuracy for {} neighbors is {}. ".format(k, 1 - (sum_of_errors / 10)))
 
-    print("Accuracy for {} neighbors is {}. ".format(k, sum_of_accuracy / 10))
-
-
-'''
-def validate_knn(k):
-    global training_entries
-    global testing_entries
-
-    error = 0
-    number_of_test = 0
-
-    for test_fold in range(0, 10):
-        read_fold_file(test_fold + 1)
-        expected_results = []
-
-        for entry in testing_entries:
-            expected_results.append(entry[number_of_attributes])
-
-        actual_results = knn_classification(k)
-
-        for index in range(0, len(expected_results)):
-            if actual_results[index] != expected_results[index]:
-                error += 1
-
-        number_of_test += len(testing_entries)
-
-        training_entries = []
-        testing_entries = []
-
-    print("Accuracy for {} neighbors is {}. ".format(k, 1.0-(error / number_of_test)))
-'''
 
 def validate_nb():
     global training_entries
@@ -399,9 +367,6 @@ def validate_nb():
     print("Accuracy for Naive Bayes is {}. ".format(1 - (sum_of_errors / 10)))
 
 
-
-
-
 if algorithm == "NB":
     read_single_file()
     naive_bayes_classification()
@@ -413,10 +378,11 @@ elif algorithm == "VGE":
 elif algorithm == "VLKN":
     validate_knn(1)
     validate_knn(3)
+    validate_knn(10)
+    validate_knn(50)
 
 elif algorithm == "VLNB":
     validate_nb()
-
 else:
     read_single_file()
     k_neighbors = int(algorithm[:-2])
